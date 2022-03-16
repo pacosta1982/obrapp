@@ -1,14 +1,14 @@
 import React, { createContext, useState} from "react";
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const AuthContext = createContext()
 
 export const AuthProvider = ({children}) => {
     const [user, setUser] = useState(null)
-    const baseUrl = 'https://c100-181-94-231-237.ngrok.io';
+    const baseUrl = 'https://414b-181-94-231-237.ngrok.io';
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    
 
     return (
         <AuthContext.Provider
@@ -20,6 +20,7 @@ export const AuthProvider = ({children}) => {
                 setError,
                 login: async (email, password) => {
                     setLoading(true)
+                    
                     try{
 
                         let res = await axios({
@@ -34,7 +35,14 @@ export const AuthProvider = ({children}) => {
                                 //setIsLoading(false);
                                 //setFullName("");
                                 //setEmail("");
-                                console.log(response.data);
+
+                                AsyncStorage.setItem('token', response.data.token)
+                                AsyncStorage.setItem('user', JSON.stringify(response.data.user));
+                                /*if(user){
+                                    user = JSON.parse(user);
+                                }*/
+                                //AsyncStorage.setItem('user', JSON.stringify(response.data.user))
+
                                 setError(null);
                                 setLoading(false)
                             }
@@ -43,7 +51,7 @@ export const AuthProvider = ({children}) => {
                                 //setIsLoading(false);
                                 //setFullName("");
                                 //setEmail("");
-                                //console.log(response.data);
+                                console.log(response.data);
                                 setError(response.data.error);
                                 setLoading(false)
                                 //console.log(response.data.error);
@@ -56,7 +64,7 @@ export const AuthProvider = ({children}) => {
                         //throw handler(e);
                         let error = err;
                         setLoading(false)
-                        //console.log(error.toJSON())
+                        console.log(error.toJSON())
 
                         /*if (err.response && err.response.data.hasOwnProperty("message"))
                             error = err.response.data;
